@@ -34,6 +34,10 @@ make run EXAMPLE=banking        # portfolio: interés, fees, reportes
 make run EXAMPLE=document       # documento: HTML vs plaintext
 ```
 
+**Salida por pantalla:**
+
+![Salida por pantalla](./assets/image.png)
+
 - `code/src/` — reservado para futura librería (`visitor::shapes::...`), hoy scaffolding
 - `code/tests/` — reservado (compila solo con `-DVISITOR_BUILD_TESTS=ON`, sin framework aún)
 - `code/build/` — efímero, nunca se commitea
