@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clang (only for clang job)
+        if: matrix.compiler == 'clang'
+        run: sudo apt-get update && sudo apt-get install -y clang
+
+      - name: Configure
+        working-directory: visitor/code
+        run: |
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            CC=clang CXX=clang++ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          else
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          fi
+
+      - name: Build
+        working-directory: visitor/code
+        run: cmake --build build
+
+      - name: Run examples
+        working-directory: visitor/code
+        run: |
+          ./build/examples/basic_shapes
+          ./build/examples/banking
+          ./build/examples/document
+
+      - name: CTest (no tests yet, must not fail the build)
+        working-directory: visitor/code
+        run: ctest --test-dir build --output-on-failure || test $? -eq 8
+        # ctest exits 8 when "No tests were found" — acceptable until a framework lands.

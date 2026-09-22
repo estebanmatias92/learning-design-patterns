@@ -1,0 +1,23 @@
+# Pitchfork: build/ holds ephemeral results, never committed.
+build/
+_build/
+cmake-build-*/
+
+# CMake artefacts (if someone builds in-source by mistake)
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+
+# Compiled objects / libs / binaries
+*.o
+*.obj
+*.a
+*.so
+*.out
+
+# Misc
+compile_commands.json
+.cache/
+.DS_Store

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0002 — The accept/visit Handshake | Visitor Pattern</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<nav class="course-nav">
+  <a href="0001-why-visitor-exists.html">← Lesson 1</a><span>·</span>
+  <a href="../reference/visitor-cheatsheet.html">Cheatsheet</a><span>·</span>
+  <a href="../reference/glossary.html">Glossary</a><span>·</span>
+  <span>Lesson 2 of 4</span>
+</nav>
+<main class="page">
+<p class="kicker">Visitor Pattern · Lesson 0002</p>
+<h1>The <code>accept</code> / <code>visit</code> handshake</h1>
+<p class="subtitle">Elements say who they are; visitors say what to do.</p>
+
+<div class="win"><strong>Your win in ~7 minutes:</strong> hand-trace <code>shape.accept(v)</code> → the exact <code>visitX</code> that runs.</div>
+
+<h2>The two sides</h2>
+<p>From <a href="0001-why-visitor-exists.html">Lesson 1</a>: elements stay dumb, visitors hold logic. The contract, per <a href="https://refactoring.guru/design-patterns/visitor">Refactoring.Guru</a> and <a href="https://designpatternsinaction.com/pattern/visitor">Design Patterns in Action</a>, is tiny:</p>
+<pre><code>interface Shape { void accept(Visitor v); }
+
+interface Visitor {
+  void visitDot(Dot d);
+  void visitCircle(Circle c);
+}
+
+class Dot implements Shape {
+  public void accept(Visitor v) { v.visitDot(this); }
+}
+class Circle implements Shape {
+  public void accept(Visitor v) { v.visitCircle(this); }
+}</code></pre>
+<p>Each <code>accept</code> is one line: call the visitor method named after <em>my own class</em>, passing <code>this</code>. <code>Dot</code> never calls <code>visitCircle</code>. That one-line honesty is the whole trick — <a href="https://martinlwx.github.io/en/visitor-pattern-understanding-double-dispatch/">MartinLwx</a> calls it “trivial forwarding that makes the pattern work.”</p>
+
+<h2>Trace it (tap through)</h2>
+<div class="figure" data-steps>
+<div class="step"><span class="badge">1</span><span>Client holds <code>Shape s = new Circle()</code> and a <code>Visitor v = new XmlExportVisitor()</code>. It calls <code>s.accept(v)</code>.</span></div>
+<div class="step"><span class="badge">2</span><span>Virtual dispatch on <code>s</code> runs <code>Circle.accept</code> — not <code>Dot.accept</code>, not base. The element reveals its runtime type.</span></div>
+<div class="step"><span class="badge">3</span><span>Inside, <code>v.visitCircle(this)</code> runs. Virtual dispatch on <code>v</code> picks <code>XmlExportVisitor.visitCircle</code>. Both types are now known.</span></div>
+<p class="meta"><button data-next-step>Reveal next step →</button> · You just simulated double dispatch; <a href="0003-single-vs-double-dispatch.html">Lesson 3</a> explains why both steps are needed.</p>
+</div>
+
+<div class="callout small"><strong>Rule:</strong> never call <code>visitX</code> from client code. Always enter through <code>accept</code>. Calling the visitor directly skips the first dispatch — the element never gets to say who it is.</div>
+
+<div class="quiz" data-quiz data-why="Dot.accept must call visitDot(this). Anything else routes to the wrong overload.">
+<h3>Check · 30 seconds</h3>
+<p class="q">What does <code>Dot.accept(v)</code> contain?</p>
+<div class="opts">
+<button data-answer data-correct="true">It calls visitDot with itself</button>
+<button data-answer data-correct="false">It calls visitCircle with itself</button>
+<button data-answer data-correct="false">It checks type then branches</button>
+</div>
+<p class="feedback" data-feedback></p>
+</div>
+
+<h2>Primary source</h2>
+<p>Read <a href="https://martinlwx.github.io/en/visitor-pattern-understanding-double-dispatch/">MartinLwx: the art of double dispatch</a>, sections on visitable objects + <code>accept</code> forwarding. Compare its Python <code>visit_add</code> to our Java <code>visitCircle</code> — same handshake.</p>
+
+<h2>Stuck? Ask me</h2>
+<p>Ask your teacher-agent to trace a new pair — e.g. “what happens for <code>new Dot().accept(new AreaVisitor())</code>?” — before continuing.</p>
+
+<hr>
+<div class="next"><a href="0001-why-visitor-exists.html">← Why Visitor exists</a><a href="0003-single-vs-double-dispatch.html">Next: single vs double dispatch →</a></div>
+<p class="meta">Reference: <a href="../reference/visitor-cheatsheet.html">cheatsheet handshake</a> · <a href="../reference/glossary.html">accept · visit · element</a></p>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

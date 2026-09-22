@@ -1,0 +1,33 @@
+# Build outputs (any level, monorepo-safe)
+build/
+_build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+compile_commands.json
+
+# Compiled objects / libs / binaries
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dylib
+*.out
+*.exe
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Misc caches
+.cache/
+.clangd/

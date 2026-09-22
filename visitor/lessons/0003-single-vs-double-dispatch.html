@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0003 — Single vs Double Dispatch | Visitor Pattern</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<nav class="course-nav">
+  <a href="0002-accept-visit-handshake.html">← Lesson 2</a><span>·</span>
+  <a href="../reference/visitor-cheatsheet.html">Cheatsheet</a><span>·</span>
+  <a href="../reference/glossary.html">Glossary</a><span>·</span>
+  <span>Lesson 3 of 4</span>
+</nav>
+<main class="page">
+<p class="kicker">Visitor Pattern · Lesson 0003</p>
+<h1>Single vs double dispatch</h1>
+<p class="subtitle">Why overloads alone pick the wrong method.</p>
+
+<div class="win"><strong>Your win in ~8 minutes:</strong> predict the output of <code>v.visit(s)</code> vs <code>s.accept(v)</code> — and say why they differ.</div>
+
+<h2>Single dispatch is all Java gives you</h2>
+<p>A virtual call like <code>s.draw()</code> dispatches on one runtime type: the receiver <code>s</code>. That is <strong>single dispatch</strong> (<a href="https://sourcemaking.com/design_patterns/visitor">SourceMaking</a>). Overloads are different: <code>v.visit(dot)</code> vs <code>v.visit(circle)</code> are chosen by the <em>static</em> type at compile time.</p>
+<pre><code>Shape s = new Dot();          // runtime: Dot, static: Shape
+Visitor v = new XmlExportVisitor();
+v.visit(s);                   // binds visit(Shape) — Dot-ness is lost!
+s.accept(v);                  // routes to visitDot — Dot-ness recovered</code></pre>
+<p><a href="https://refactoring.guru/design-patterns/visitor-double-dispatch">Refactoring.Guru: Visitor and Double Dispatch</a> shows this exact trap: the compiler “plays safe” with overloads and uses early binding, so <code>visit(Shape)</code> wins even though the object <em>is</em> a <code>Dot</code>.</p>
+
+<h2>Visitor = two single dispatches</h2>
+<div class="figure">
+<div class="step"><span class="badge">1</span><span><strong>First dispatch:</strong> <code>s.accept(v)</code> is virtual on the element. Runtime type picks <code>Dot.accept</code>. Type recovered once.</span></div>
+<div class="step"><span class="badge">2</span><span><strong>Second dispatch:</strong> <code>v.visitDot(this)</code> is virtual on the visitor. Inside <code>Dot.accept</code>, <code>this</code> is statically <code>Dot</code>, so the overload binds correctly — then dispatches to <code>XmlExportVisitor</code>. Type recovered twice.</span></div>
+</div>
+<p>No <code>instanceof</code>, no casts. <a href="https://martinlwx.github.io/en/visitor-pattern-understanding-double-dispatch/">MartinLwx</a>: “two consecutive single dispatches produce the same effect” as double dispatch.</p>
+
+<div class="quiz" data-quiz data-why="Overloads bind on the static type Shape, so visit(Shape) wins. accept() re-exposes the runtime type.">
+<h3>Check · 40 seconds</h3>
+<p class="q"><code>Shape s = new Dot(); v.visit(s);</code> calls…</p>
+<div class="opts">
+<button data-answer data-correct="true">visitShape version, static type rules</button>
+<button data-answer data-correct="false">visitDot version, runtime type rules</button>
+<button data-answer data-correct="false">compile error, ambiguous method call</button>
+</div>
+<p class="feedback" data-feedback></p>
+</div>
+
+<h2>Primary source</h2>
+<p>Read <a href="https://refactoring.guru/design-patterns/visitor-double-dispatch">Visitor and Double Dispatch</a> end-to-end (short). Re-run its <code>Graphic g = new Dot()</code> example mentally with <code>visitDot</code> names instead of overloads.</p>
+
+<h2>Stuck? Ask me</h2>
+<p>Ask your teacher-agent: “show me the wrong output if I skip <code>accept</code>” or “why do we name methods <code>visitDot</code> instead of overloading <code>visit</code>?” — both are worth nailing before <a href="0004-when-not-to-use-it.html">Lesson 4</a>.</p>
+
+<hr>
+<div class="next"><a href="0002-accept-visit-handshake.html">← accept/visit handshake</a><a href="0004-when-not-to-use-it.html">Next: when NOT to use it →</a></div>
+<p class="meta">Reference: <a href="../reference/visitor-cheatsheet.html">dispatch diagram</a> · <a href="../reference/glossary.html">single · double dispatch</a></p>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

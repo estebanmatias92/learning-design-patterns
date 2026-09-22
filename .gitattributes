@@ -1,0 +1,19 @@
+# Normalize line endings, keep web + cpp diff-friendly
+* text=auto eol=lf
+
+*.cpp text diff=cpp
+*.hpp text diff=cpp
+*.h text diff=cpp
+*.cmake text
+CMakeLists.txt text
+Makefile text
+*.html text
+*.css text
+*.js text
+*.md text
+*.json text
+
+# GitHub language stats: lessons/reference are docs, not primary code
+visitor/lessons/** linguist-documentation
+visitor/reference/** linguist-documentation
+visitor/assets/** linguist-documentation

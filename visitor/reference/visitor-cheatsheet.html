@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visitor Cheatsheet | Visitor Pattern</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<nav class="course-nav">
+  <a href="../lessons/0001-why-visitor-exists.html">Lessons</a><span>·</span>
+  <a href="glossary.html">Glossary</a><span>·</span>
+  <span>Reference · prints cleanly</span>
+</nav>
+<main class="page">
+<p class="kicker">Reference</p>
+<h1>Visitor cheatsheet</h1>
+<p class="subtitle">The compressed essence of Lessons 1–4. Revisit this, not the lessons.</p>
+
+<h2>Skeleton (Java)</h2>
+<pre><code>interface Shape { void accept(Visitor v); }
+
+interface Visitor {
+  void visitDot(Dot d);
+  void visitCircle(Circle c);
+}
+
+class Dot implements Shape {
+  public void accept(Visitor v) { v.visitDot(this); }
+}
+class Circle implements Shape {
+  public void accept(Visitor v) { v.visitCircle(this); }
+}
+
+class XmlExportVisitor implements Visitor {
+  public void visitDot(Dot d) { /* export dot */ }
+  public void visitCircle(Circle c) { /* export circle */ }
+}
+
+// Client: never type-checks
+for (Shape s : shapes) s.accept(new XmlExportVisitor());</code></pre>
+
+<h2>Dispatch in two lines</h2>
+<div class="figure">
+<div class="step"><span class="badge">1</span><span><code>s.accept(v)</code> — virtual on element. Picks <code>Dot.accept</code> vs <code>Circle.accept</code>.</span></div>
+<div class="step"><span class="badge">2</span><span><code>v.visitDot(this)</code> — virtual on visitor. Picks <code>XmlExportVisitor.visitDot</code>. Overload binds because <code>this</code> is statically <code>Dot</code>.</span></div>
+</div>
+
+<h2>Rules</h2>
+<ul>
+<li>Enter through <code>accept</code> only. Never call <code>visitX</code> from client code.</li>
+<li>Every concrete element overrides <code>accept</code> itself; no base-class <code>instanceof</code>.</li>
+<li>Prefer named <code>visitDot</code> over overloaded <code>visit(Dot)</code> — grep-friendly, mis-wiring fails loudly.</li>
+<li>Make visitor methods pure-virtual / abstract — a forgotten override must not compile silently.</li>
+</ul>
+
+<h2>Costs</h2>
+<ul>
+<li><strong>New operation:</strong> +1 visitor class, 0 element edits. Cheap.</li>
+<li><strong>New element type:</strong> +1 <code>visitX</code> on interface + update every visitor. Expensive.</li>
+<li><strong>Fit:</strong> stable types, growing operations (compilers, ASTs, document models). Volatile types → plain virtuals.</li>
+</ul>
+
+<p class="meta">Sources: <a href="https://refactoring.guru/design-patterns/visitor">Guru: Visitor</a> · <a href="https://refactoring.guru/design-patterns/visitor-double-dispatch">Guru: Double Dispatch</a> · Lessons: <a href="../lessons/0001-why-visitor-exists.html">1</a> <a href="../lessons/0002-accept-visit-handshake.html">2</a> <a href="../lessons/0003-single-vs-double-dispatch.html">3</a> <a href="../lessons/0004-when-not-to-use-it.html">4</a></p>
+</main>
+</body>
+</html>

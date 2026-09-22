@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0004 — When NOT to Use It | Visitor Pattern</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<nav class="course-nav">
+  <a href="0003-single-vs-double-dispatch.html">← Lesson 3</a><span>·</span>
+  <a href="../reference/visitor-cheatsheet.html">Cheatsheet</a><span>·</span>
+  <a href="../reference/glossary.html">Glossary</a><span>·</span>
+  <span>Lesson 4 of 4</span>
+</nav>
+<main class="page">
+<p class="kicker">Visitor Pattern · Lesson 0004</p>
+<h1>When <em>not</em> to use it</h1>
+<p class="subtitle">Cheap in one direction, expensive in the other.</p>
+
+<div class="win"><strong>Your win in ~7 minutes:</strong> given a change (“new export” vs “new shape”), choose Visitor or reject it — and defend the call.</div>
+
+<h2>The asymmetry</h2>
+<p>From <a href="0001-why-visitor-exists.html">Lesson 1</a> through <a href="0003-single-vs-double-dispatch.html">Lesson 3</a> you built the machine. Now price it, per <a href="https://refactoring.guru/design-patterns/visitor">Refactoring.Guru</a>:</p>
+<div class="figure">
+<div class="step"><span class="badge">+</span><span><strong>New operation: cheap.</strong> Add <code>PdfExportVisitor</code> implementing <code>visitDot/visitCircle</code>. Zero edits to elements. Open/Closed holds.</span></div>
+<div class="step"><span class="badge">−</span><span><strong>New element type: expensive.</strong> Add <code>Rectangle</code> → add <code>visitRectangle</code> to the interface → update <em>every</em> existing visitor. Recompile-the-world.</span></div>
+<div class="step"><span class="badge">=</span><span><strong>Rule-of-thumb:</strong> stable types + growing operations → Visitor. Volatile types → skip it; prefer plain polymorphism.</span></div>
+</div>
+<p><a href="https://martinlwx.github.io/en/visitor-pattern-understanding-double-dispatch/">MartinLwx</a> sharpens it: Visitor fits compilers and analyzers because an AST is stable while analyses multiply. The reverse — new node types weekly — makes Visitor “more work than it saves.”</p>
+
+<h2>Two more costs</h2>
+<ul>
+<li><strong>Encapsulation strain.</strong> Visitors often need data elements would rather keep private. You widen access or the visitor cannot do its job.</li>
+<li><strong>Temptation to cheat.</strong> An <code>instanceof</code> inside <code>visit</code>, or a base-class <code>accept</code> that type-checks, silently breaks the <a href="0002-accept-visit-handshake.html">handshake</a>. Each concrete element must override <code>accept</code> itself — see <a href="https://designpatternsinaction.com/pattern/visitor">anti-patterns</a>.</li>
+</ul>
+
+<div class="quiz" data-quiz data-why="New operations are one new class. New types touch the interface and every visitor.">
+<h3>Check · 40 seconds</h3>
+<p class="q">Your team adds Rectangle. Cost?</p>
+<div class="opts">
+<button data-answer data-correct="true">Update interface plus all visitors</button>
+<button data-answer data-correct="false">Add visitor, touch zero types</button>
+<button data-answer data-correct="false">Add element, touch zero visitors</button>
+</div>
+<p class="feedback" data-feedback></p>
+</div>
+
+<div class="quiz" data-quiz data-why="Shapes change monthly, exports rarely: Visitor taxes every shape addition. Plain virtuals win.">
+<h3>Retrieve + interleave · 40 seconds</h3>
+<p class="q">Shapes monthly, exports rarely. Verdict?</p>
+<div class="opts">
+<button data-answer data-correct="true">Reject Visitor, use plain virtuals</button>
+<button data-answer data-correct="false">Adopt Visitor, add more visitors</button>
+<button data-answer data-correct="false">Merge logic into element classes</button>
+</div>
+<p class="feedback" data-feedback></p>
+</div>
+
+<h2>Primary source</h2>
+<p>Re-read <a href="https://refactoring.guru/design-patterns/visitor">Guru: Pros and Cons</a> plus <a href="https://designpatternsinaction.com/pattern/visitor">Design Patterns in Action: Q&amp;A</a>. Then try the mission task: implement <code>XmlExportVisitor</code> for <code>Dot/Circle</code> without editing either class.</p>
+
+<h2>Stuck? Ask me</h2>
+<p>Ask your teacher-agent to review your <code>XmlExportVisitor</code>, or to argue the other side (“convince me Visitor still fits volatile types”). Wisdom comes from defending the tradeoff out loud.</p>
+
+<hr>
+<div class="next"><a href="0003-single-vs-double-dispatch.html">← Single vs double dispatch</a><a href="../reference/visitor-cheatsheet.html">Cheatsheet for review →</a></div>
+<p class="meta">Course complete: <a href="0001-why-visitor-exists.html">1</a> · <a href="0002-accept-visit-handshake.html">2</a> · <a href="0003-single-vs-double-dispatch.html">3</a> · 4 · Spaced recall: re-take all four quizzes tomorrow.</p>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

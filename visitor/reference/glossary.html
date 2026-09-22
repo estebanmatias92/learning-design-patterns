@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glossary | Visitor Pattern</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<nav class="course-nav">
+  <a href="../lessons/0001-why-visitor-exists.html">Lessons</a><span>·</span>
+  <a href="visitor-cheatsheet.html">Cheatsheet</a><span>·</span>
+  <span>Glossary</span>
+</nav>
+<main class="page">
+<p class="kicker">Reference</p>
+<h1>Visitor glossary</h1>
+<p class="subtitle">Canonical language for this workspace. Lessons adhere to these terms.</p>
+
+<h2>Terms</h2>
+<p><strong>Visitor</strong>: An object that encapsulates one operation across every element type.<br><span class="meta">Avoid: handler, processor (too vague)</span></p>
+<p><strong>Element</strong>: A member of the visited hierarchy that accepts visitors.<br><span class="meta">Avoid: node, shape (too narrow outside examples)</span></p>
+<p><strong>accept</strong>: The element-side entry point that routes to the matching visitor method.<br><span class="meta">Avoid: receive, dispatch (hides the handshake)</span></p>
+<p><strong>visit</strong>: The visitor-side method that implements logic for one concrete element type.<br><span class="meta">Avoid: handle, process (obscures the accept/visit pair)</span></p>
+<p><strong>Single dispatch</strong>: Method selection based on the runtime type of one object, the receiver.<br><span class="meta">Avoid: normal polymorphism (imprecise)</span></p>
+<p><strong>Double dispatch</strong>: Method selection based on the runtime types of two objects, element and visitor.<br><span class="meta">Avoid: multiple dispatch (broader than two)</span></p>
+<p><strong>Expression problem</strong>: The tension between adding new types and adding new operations to a hierarchy.<br><span class="meta">Avoid: extensibility problem (loses the type-vs-operation axis)</span></p>
+
+<p class="meta">In this workspace, <code>accept</code> always means the element method and <code>visit</code> always means the visitor method. Promote a term here only once you can use it correctly — see Lessons <a href="../lessons/0001-why-visitor-exists.html">1</a>–<a href="../lessons/0004-when-not-to-use-it.html">4</a>.</p>
+</main>
+</body>
+</html>

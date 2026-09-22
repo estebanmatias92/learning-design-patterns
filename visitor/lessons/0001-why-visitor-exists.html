@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0001 — Why Visitor Exists | Visitor Pattern</title>
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<nav class="course-nav">
+  <a href="../index.html">Module</a><span>·</span>
+  <a href="../reference/visitor-cheatsheet.html">Cheatsheet</a><span>·</span>
+  <a href="../reference/glossary.html">Glossary</a><span>·</span>
+  <span>Lesson 1 of 4</span>
+</nav>
+<main class="page">
+<p class="kicker">Visitor Pattern · Lesson 0001</p>
+<h1>Why Visitor exists</h1>
+<p class="subtitle">Add operations without reopening every class.</p>
+
+<div class="win"><strong>Your win in ~6 minutes:</strong> look at a shape hierarchy and say whether Visitor fits — before writing any Visitor code.</div>
+
+<h2>The mess it fixes</h2>
+<p>You have <code>Dot</code> and <code>Circle</code>. First you add <code>draw()</code>. Then <code>exportXml()</code>. Then <code>area()</code>. Each operation lands <em>inside</em> every element class, or in one giant <code>instanceof</code> chain:</p>
+<pre><code>if (shape instanceof Dot d) { /* export dot */ }
+else if (shape instanceof Circle c) { /* export circle */ }
+// every new operation repeats this chain
+</code></pre>
+<p>This is the <strong>expression problem</strong>: a stable set of types with a growing set of operations. <a href="https://sourcemaking.com/design_patterns/visitor">SourceMaking</a> puts Visitor's intent bluntly — define a new operation <em>without changing element classes</em>. <a href="https://refactoring.guru/design-patterns/visitor">Refactoring.Guru</a> frames it the same way: separate algorithms from the objects they run on.</p>
+
+<h2>The Visitor move</h2>
+<p>Keep elements dumb. Put each operation in its own visitor class:</p>
+<pre><code>interface Shape { void accept(Visitor v); }
+interface Visitor {
+  void visitDot(Dot d);
+  void visitCircle(Circle c);
+}
+// New operation = new class. Shapes never change.
+class XmlExportVisitor implements Visitor { /* ... */ }
+class AreaVisitor implements Visitor { /* ... */ }</code></pre>
+<p>Client code never type-checks. It just does <code>shape.accept(visitor)</code> and the right method fires — you will trace exactly how in <a href="0002-accept-visit-handshake.html">Lesson 2</a>.</p>
+
+<div class="callout"><strong>Mission tie:</strong> every lesson serves your mission — no more <code>instanceof</code> chains when a new export, metric, or check arrives. See <a href="../reference/visitor-cheatsheet.html">cheatsheet</a> for the skeleton.</div>
+
+<div class="quiz" data-quiz data-why="Visitor is for stable types with growing operations. Volatile types make every visitor pay.">
+<h3>Check · 30 seconds</h3>
+<p class="q">Which situation calls for Visitor?</p>
+<div class="opts">
+<button data-answer data-correct="true">Stable shapes, endless new exports</button>
+<button data-answer data-correct="false">Volatile shapes, endless new exports</button>
+<button data-answer data-correct="false">Stable shapes, frozen old exports</button>
+</div>
+<p class="feedback" data-feedback></p>
+<p class="meta">Answers are equal length by design — no formatting hints.</p>
+</div>
+
+<h2>Primary source</h2>
+<p>Read <a href="https://refactoring.guru/design-patterns/visitor">Refactoring.Guru: Visitor</a> — intent, motivation diagram, and Java structure. Skim only “Intent” and “Problem”; stop before “Implementation” (that is Lessons 2–3).</p>
+
+<h2>Stuck? Ask me</h2>
+<p>I am your teacher-agent. Ask anything unclear — e.g. “how is this different from just adding a method?” — before moving on. Retrieval now beats re-reading later.</p>
+
+<hr>
+<div class="next"><span>← Start here</span><a href="0002-accept-visit-handshake.html">Next: the accept/visit handshake →</a></div>
+<p class="meta">Terms: <a href="../reference/glossary.html">Visitor · Element · Expression Problem</a> · Storage tip: recall this lesson tomorrow without reopening it.</p>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>
